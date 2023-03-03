@@ -47,6 +47,9 @@ public class TodoService {
                 .orElse(null);
     }
 	
+	
+	/* Utils */
+	
 	private long generateId() {
 		return this.idSequence++;
 	}

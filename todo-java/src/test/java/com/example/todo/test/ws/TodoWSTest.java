@@ -35,7 +35,7 @@ public class TodoWSTest {
     private TodoService todoService;
 	
 	@Test
-	public void testGetAllTodo() throws Exception {
+	public void testGetAllTodoOk() throws Exception {
 		
 		List<DetailedTodo> todos = Arrays.asList(
                 new DetailedTodo(0, "Prepare food", false, "No description"),
@@ -58,7 +58,7 @@ public class TodoWSTest {
 	}
 	
 	@Test
-    public void testUpdateTodoState() throws Exception {
+    public void testUpdateTodoStateOk() throws Exception {
 		String state = "true";
         mockMvc.perform(put(WS_TODO_PATH + "/0").param("state", state))
                 .andExpect(status().isOk());
@@ -66,4 +66,17 @@ public class TodoWSTest {
         verify(todoService, times(1)).updateTodoState(0, Boolean.valueOf(state));
     }
 	
+	@Test
+    public void testGetTodoById() throws Exception {
+        DetailedTodo todo = new DetailedTodo(1, "Go grocery shopping", false, "Milk, eggs, bread");
+        
+        when(todoService.getTodoById(1)).thenReturn(todo);
+
+        mockMvc.perform(get(WS_TODO_PATH + "/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.title", is("Go grocery shopping")))
+                .andExpect(jsonPath("$.description", is("Milk, eggs, bread")))
+                .andExpect(jsonPath("$.done", is(false)));
+    }
 }
