@@ -2,10 +2,12 @@ package com.example.todo.test.ws;
 
 import static com.example.todo.ws.TodoConfiguration.WS_TODO_PATH;
 import static org.hamcrest.CoreMatchers.is;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -19,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.example.todo.models.DetailedTodo;
@@ -78,5 +81,44 @@ public class TodoWSTest {
                 .andExpect(jsonPath("$.title", is("Go grocery shopping")))
                 .andExpect(jsonPath("$.description", is("Milk, eggs, bread")))
                 .andExpect(jsonPath("$.done", is(false)));
+    }
+	
+	@Test
+    public void testAddTodoOk() throws Exception {
+        DetailedTodo todo = new DetailedTodo(0,"DoStuffbrain",false, "Nodescriptionneeded");
+        String json = "{\"description\":\"Nodescriptionneeded\",\"done\":false,\"id\":0,\"title\":\"DoStuffbrain\"}";
+
+        mockMvc.perform(post(WS_TODO_PATH)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json))
+                .andExpect(status().isOk());
+
+        verify(todoService, times(1)).addTodo(todo);
+    }
+	
+	@Test
+    public void testAddTodoWithEmptyTitle() throws Exception {
+        DetailedTodo todo = new DetailedTodo(99,"",false, "");
+        String json = "{\"description\":\"\",\"done\":false,\"id\":99,\"title\":\"\"}";
+
+        mockMvc.perform(post(WS_TODO_PATH)
+	                .contentType(MediaType.APPLICATION_JSON)
+	                .content(json))
+	           .andExpect(status().isBadRequest());
+
+        verify(todoService, never()).addTodo(todo);
+    }
+	
+	@Test
+    public void testAddTodoWithNullTitle() throws Exception {
+        DetailedTodo todo = new DetailedTodo(99, null, false, "");
+        String json = "{\"description\":\"\",\"done\":false,\"id\":99,\"title\":null}";
+
+        mockMvc.perform(post(WS_TODO_PATH)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json))
+                .andExpect(status().isBadRequest());
+
+        verify(todoService, never()).addTodo(todo);
     }
 }

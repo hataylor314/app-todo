@@ -47,6 +47,12 @@ public class TodoService {
                 .orElse(null);
     }
 	
+	public void addTodo(DetailedTodo todo) {
+		todo.setId(generateId());
+		todo.setDone(false); // Set par défaut le false car création
+		this.todos.add(0, todo);
+	}
+	
 	
 	/* Utils */
 	

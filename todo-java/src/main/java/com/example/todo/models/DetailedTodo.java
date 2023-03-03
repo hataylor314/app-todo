@@ -2,10 +2,16 @@ package com.example.todo.models;
 
 import java.util.Objects;
 
+import javax.validation.constraints.NotBlank;
+
+import org.springframework.validation.annotation.Validated;
+
+@Validated
 public class DetailedTodo {
 	
 	private long id;
 	
+	@NotBlank(message = "Le titre de la Todo est obligatoire")
 	private String title;
 	
 	private boolean done;
@@ -17,6 +23,10 @@ public class DetailedTodo {
 		this.title = title;
 		this.done = done;
 		this.description = description;
+	}
+	
+	public DetailedTodo() {
+		
 	}
 
 	public long getId() {
