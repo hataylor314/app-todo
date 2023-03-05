@@ -4,29 +4,24 @@ import java.util.Objects;
 
 import javax.validation.constraints.NotBlank;
 
-import org.springframework.validation.annotation.Validated;
-
-@Validated
-public class DetailedTodo {
+public class TodoDTO {
 	
 	private long id;
 	
-	@NotBlank(message = "Le titre de la Todo est obligatoire")
+	@NotBlank(message = "Le titre doit être obligatoire")
 	private String title;
 	
 	private boolean done;
 	
-	private String description;
+	public TodoDTO() {
+		
+	}
 	
-	public DetailedTodo(long id, String title, boolean done, String description) {
+	public TodoDTO(long id, String title, boolean done) {
+		super();
 		this.id = id;
 		this.title = title;
 		this.done = done;
-		this.description = description;
-	}
-	
-	public DetailedTodo() {
-		
 	}
 
 	public long getId() {
@@ -53,17 +48,9 @@ public class DetailedTodo {
 		this.done = done;
 	}
 
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
 	@Override
 	public int hashCode() {
-		return Objects.hash(description, done, id, title);
+		return Objects.hash(done, id, title);
 	}
 
 	@Override
@@ -74,13 +61,9 @@ public class DetailedTodo {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		DetailedTodo other = (DetailedTodo) obj;
-		return Objects.equals(description, other.description) && done == other.done && id == other.id
-				&& Objects.equals(title, other.title);
+		TodoDTO other = (TodoDTO) obj;
+		return done == other.done && id == other.id && Objects.equals(title, other.title);
 	}
-	
-	
-	
-	
 
+	
 }

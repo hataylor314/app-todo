@@ -1,14 +1,20 @@
-package com.example.todo.models;
+package com.example.todo.entities;
 
 import java.util.Objects;
 
-public class Todo {
+public class TodoEO {
 	
 	private long id;
 	
 	private String title;
 	
 	private boolean done;
+	
+	public TodoEO(long id, String title, boolean done) {
+		this.id = id;
+		this.title = title;
+		this.done = done;
+	}
 
 	public long getId() {
 		return id;
@@ -47,7 +53,9 @@ public class Todo {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Todo other = (Todo) obj;
+		TodoEO other = (TodoEO) obj;
 		return done == other.done && id == other.id && Objects.equals(title, other.title);
 	}
+
+	
 }
