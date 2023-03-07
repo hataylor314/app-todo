@@ -1,0 +1,39 @@
+<div class="background-image">
+  <div class="todo-container">
+  <div class="header">
+    <h1>To-do List</h1>
+  </div>
+  <div class="d-flex justify-content-center">
+    <mat-spinner *ngIf="loading"></mat-spinner>
+  </div>
+  <div *ngIf="!loading">
+    <div class="row d-flex justify-content-end">
+      <button title="Ajouter" (click) = "openModale('Create')"
+              class="btn btn-outline-success col-3 icon-link">
+              <span class="material-icons mr-3">add</span> Ajouter une To-do
+      </button>
+    </div>
+    <div class="row">
+      <div class="card col-lg-4 col-6 col-md-4 col-sm-6" *ngFor="let todo of listOfTodo">
+        <div class="row">
+          <h4 [ngClass]="todo.done? 'crossed':''">{{todo.title}}</h4>
+        </div>
+        <div class="row">
+          <p><b [ngClass]="todo.done?'green-color':'red-color'">{{todo.done?'Done':'Not Done'}}</b></p>
+        </div>
+        <div class="row d-flex justify-content-end">
+          <div class="d-flex justify-content-end">
+            <a title="Modifier" (click) = "openModale('Edit', todo)" *ngIf="editAuthorized(todo)"
+              class="btn btn-outline-success col-2 icon-link mr-1">
+              <span class="material-icons">edit</span>
+            </a>
+            <a title = "Consulter" (click) = "openModale('Consult', todo)" class="btn btn-outline-success col-2 mr-3 icon-link">
+            <span class="material-icons">visibility</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+</div>

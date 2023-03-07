@@ -1,0 +1,58 @@
+
+<div class="row modale-titre-container mb-4">
+  <div class="mx-auto">
+    <h3 *ngIf="createMode">Ajouter une To-do</h3>
+    <h3 *ngIf="!createMode && !consultMode">Changer l'état d'une To-do</h3>
+    <h3 *ngIf="consultMode">Consulter une To-do</h3>
+  </div>
+  <button type="button" class="btn btn-close-modal" (click)="close()">
+    <span aria-hidden="true" class="material-icons text-white">clear
+    </span>
+    <div class="sr-only">Fermer la fenêtre</div>
+  </button>
+</div>
+
+<div class="modale-content-container">
+  <div class="d-flex justify-content-center">
+    <mat-spinner *ngIf="loading"></mat-spinner>
+  </div>
+
+  <form [formGroup]="modeleForm" *ngIf="!loading">
+    <div class="row">
+      <div class="col-10">
+        <div class="d-flex flex-column">
+          <label class="req-star">
+            Title
+          </label>
+          <input type="text" formControlName="title" class="px-3 py-3" [ngClass]="{'error': hasError(title)}">
+          <div class="errors-container" [ngClass]="{'hidden': !hasError(title)}">
+            <label class="text-danger" *ngIf="title?.errors?.required">Ce champ est obligatoire.</label>
+          </div>
+        </div>
+      </div>
+      <div class="col-12">
+        <div class="d-flex flex-column">
+          <label class="label-text-top">Description</label>
+          <textarea class="px-3 py-3" type="text" formControlName="description"></textarea>
+          <div class="errors-container" [ngClass]="{'hidden' : !hasError(description)}">
+            <label class="text-danger label-error" *ngIf="description?.errors?.maxlength">Taille maximale : 255 caractères.</label>
+          </div>
+        </div>
+      </div>
+      <div class="col-3">
+        <mat-checkbox class="" formControlName="done" [disabled]="createMode || consultMode">Done</mat-checkbox>
+      </div>
+    </div>
+  </form>
+  <div class="row mt-4">
+    <div class="col-12 d-flex justify-content-end">
+      <button *ngIf="!submitting" type="button" class="btn btn-secondary btn-lg" (click)="close()">
+        {{isPristineForm ? 'Sortir' : 'Annuler'}}
+      </button>
+      <button *ngIf="!submitting && !isPristineForm" type="submit" class="btn btn-primary ml-2 btn-lg" cdkFocusInitial
+        (click)="save()">
+        Enregistrer
+      </button>
+    </div>
+  </div>
+</div>
