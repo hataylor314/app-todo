@@ -14,6 +14,11 @@ import com.example.todo.mappers.DetailedTodoMapper;
 import com.example.todo.models.DetailedTodoDTO;
 import com.example.todo.repositories.TodoRepository;
 
+/**
+ * Service to-do 
+ * @author hbziouet
+ *
+ */
 @Service
 public class TodoService {
 		
@@ -28,10 +33,22 @@ public class TodoService {
 		this.detailedTodoMapper = detailedTodoMapper;
 	}
 
+	
+	/**
+	 * Récupère la liste des to-do.
+	 * @return liste des to-do.
+	 */
 	public List<DetailedTodoDTO> getAll(){
 		return repo.getAll().stream().map(t -> detailedTodoMapper.convert(t)).collect(Collectors.toList());
 	}
 	
+	
+	/**
+	 * Met à jour l'état d'une to-do.
+	 * @param id
+	 * @param done
+	 * @throws TodoException
+	 */
 	public void updateTodoState(long id, boolean done) throws TodoException {
 		DetailedTodoEO todoEO = repo.getTodoById(id);
 		if(todoEO == null) {
@@ -40,6 +57,13 @@ public class TodoService {
 		repo.updateTodoState(todoEO, done);
     }
 	
+	
+	/**
+	 * Récupère une todo par son identifiant.
+	 * @param id
+	 * @return
+	 * @throws TodoException
+	 */
 	public DetailedTodoDTO getTodoById(long id) throws TodoException {
 		DetailedTodoEO todoEO = repo.getTodoById(id);
 		
@@ -50,6 +74,11 @@ public class TodoService {
 		return detailedTodoMapper.convert(todoEO);
     }
 	
+	
+	/**
+	 * Ajoute une nouvelle to-do
+	 * @param todo
+	 */
 	public void addTodo(DetailedTodoDTO todo) {
 		repo.addTodo(detailedTodoMapper.convert(todo));
 	}

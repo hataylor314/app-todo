@@ -7,6 +7,11 @@ import org.mapstruct.Mapper;
 import com.example.todo.models.DetailedTodoDTO;
 import com.example.todo.models.TodoDTO;
 
+/**
+ * Mapper qui convertit une to-do détaillé en todo.
+ * @author hbziouet
+ *
+ */
 @Mapper(componentModel = "spring")
 public interface DetailedTodo2TodoMapper {
 	

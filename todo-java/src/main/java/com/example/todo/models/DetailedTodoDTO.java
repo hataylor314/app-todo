@@ -4,9 +4,17 @@ import java.util.Objects;
 
 import org.springframework.validation.annotation.Validated;
 
+/**
+ * Vue d'une to-do détaillée.
+ * @author hbziouet
+ *
+ */
 @Validated
 public class DetailedTodoDTO extends TodoDTO {
 	
+	/**
+	 * Description de la to-do.
+	 */
 	private String description;
 
 	public DetailedTodoDTO() {

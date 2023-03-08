@@ -2,12 +2,28 @@ package com.example.todo.entities;
 
 import java.util.Objects;
 
+
+/**
+ * Entité To-do qui possède l'état de la to-do et son titre.
+ * @author hbziouet
+ *
+ */
 public class TodoEO {
 	
+	/**
+	 * Identifiant unique de la to-do.
+	 */
 	private long id;
 	
+	/**
+	 * Titre de la to-do.
+	 */
 	private String title;
 	
+	
+	/**
+	 *  Etat de la to-do.
+	 */
 	private boolean done;
 	
 	public TodoEO(long id, String title, boolean done) {

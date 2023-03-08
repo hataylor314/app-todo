@@ -4,13 +4,28 @@ import java.util.Objects;
 
 import javax.validation.constraints.NotBlank;
 
+
+/**
+ * Vue d'une Todo composée d'un titre et de son état.
+ * @author hbziouet
+ *
+ */
 public class TodoDTO {
 	
+	/**
+	 * Identifiant de la to-do
+	 */
 	private long id;
 	
+	/**
+	 * Titre de la to-do
+	 */
 	@NotBlank(message = "Le titre doit être obligatoire")
 	private String title;
 	
+	/**
+	 * Etat de la to-do
+	 */
 	private boolean done;
 	
 	public TodoDTO() {

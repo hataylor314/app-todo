@@ -2,8 +2,17 @@ package com.example.todo.entities;
 
 import java.util.Objects;
 
+/**
+ * Entité Detailed To-do qui possède la totalité des informations lié à une to-do.
+ * @author hbziouet
+ *
+ */
 public class DetailedTodoEO extends TodoEO {
 	
+	
+	/**
+	 * Description de la to-do.
+	 */
 	private String description;
 
 	public DetailedTodoEO(long id, String title, boolean done, String description) {

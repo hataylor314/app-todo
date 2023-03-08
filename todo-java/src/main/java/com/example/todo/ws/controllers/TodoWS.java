@@ -34,6 +34,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
+/**
+ * Web service To-do.
+ * @author hbziouet
+ *
+ */
 @RestController
 @Api(tags = "Todo")
 @RequestMapping(WS_TODO_PATH)

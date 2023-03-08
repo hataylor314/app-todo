@@ -1,5 +1,10 @@
 package com.example.todo.exception;
 
+/**
+ * Exception to-do.
+ * @author hbziouet
+ *
+ */
 public class TodoException extends Exception{
 	
 	private static final long serialVersionUID = 1L;
@@ -31,6 +36,11 @@ public class TodoException extends Exception{
 		this.httpCode = httpCode;
 	}
 
+	
+	/**
+	 * Méthode de validation du http code
+	 * @param httpCode
+	 */
 	private void validateHttpCode(Integer httpCode) {
 		if (httpCode != null && httpCode < 400) {
 			throw new IllegalArgumentException(
@@ -38,6 +48,10 @@ public class TodoException extends Exception{
 		}
 	}
 
+	/**
+	 * Méthode qui récupère le http code
+	 * @return
+	 */
 	public Integer getHttpCode() {
 		return httpCode;
 	}
