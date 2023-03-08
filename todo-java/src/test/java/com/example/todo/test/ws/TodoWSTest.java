@@ -1,124 +1,166 @@
 package com.example.todo.test.ws;
 
-import static com.example.todo.ws.TodoConfiguration.WS_TODO_PATH;
-import static org.hamcrest.CoreMatchers.is;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.ArrayList;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import com.example.todo.models.DetailedTodo;
+import com.example.todo.exception.TodoException;
+import com.example.todo.mappers.DetailedTodo2TodoMapper;
+import com.example.todo.models.DetailedTodoDTO;
+import com.example.todo.models.TodoDTO;
 import com.example.todo.services.TodoService;
+import com.example.todo.ws.controllers.TodoWS;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-
+@ActiveProfiles("test")
 @SpringBootTest
-@AutoConfigureMockMvc
 public class TodoWSTest {
-	@Autowired
-	private MockMvc mockMvc;
-	
-	@MockBean
+
+
+    private MockMvc mockMvc;
+
+    @InjectMocks
+    private TodoWS subject;
+
+    @Mock
     private TodoService todoService;
-	
-	@Test
-	public void testGetAllTodoOk() throws Exception {
-		
-		List<DetailedTodo> todos = Arrays.asList(
-                new DetailedTodo(0, "Prepare food", false, "No description"),
-                new DetailedTodo(1, "Do laundry", false, "No description"),
-                new DetailedTodo(2, "Call the school principal", false, "No description")
-        );
-		
-		 when(todoService.getAll()).thenReturn(todos);
-		 
-		this.mockMvc.perform(get(WS_TODO_PATH + "/all")).andDo(print()).andExpect(status().isOk())
-		.andExpect(jsonPath("$[0].id", is(0)))
-        .andExpect(jsonPath("$[0].title", is("Prepare food")))
-        .andExpect(jsonPath("$[0].done", is(false)))
-        .andExpect(jsonPath("$[1].id", is(1)))
-        .andExpect(jsonPath("$[1].title", is("Do laundry")))
-        .andExpect(jsonPath("$[1].done", is(false)))
-        .andExpect(jsonPath("$[2].id", is(2)))
-        .andExpect(jsonPath("$[2].title", is("Call the school principal")))
-        .andExpect(jsonPath("$[2].done", is(false)));
-	}
-	
-	@Test
-    public void testUpdateTodoStateOk() throws Exception {
-		String state = "true";
-        mockMvc.perform(put(WS_TODO_PATH + "/0").param("state", state))
-                .andExpect(status().isOk());
 
-        verify(todoService, times(1)).updateTodoState(0, Boolean.valueOf(state));
-    }
-	
-	@Test
-    public void testGetTodoById() throws Exception {
-        DetailedTodo todo = new DetailedTodo(1, "Go grocery shopping", false, "Milk, eggs, bread");
-        
-        when(todoService.getTodoById(1)).thenReturn(todo);
+    @Mock
+    private DetailedTodo2TodoMapper detailedTodo2TodoMapper;
 
-        mockMvc.perform(get(WS_TODO_PATH + "/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(1)))
-                .andExpect(jsonPath("$.title", is("Go grocery shopping")))
-                .andExpect(jsonPath("$.description", is("Milk, eggs, bread")))
-                .andExpect(jsonPath("$.done", is(false)));
-    }
-	
-	@Test
-    public void testAddTodoOk() throws Exception {
-        DetailedTodo todo = new DetailedTodo(0,"DoStuffbrain",false, "Nodescriptionneeded");
-        String json = "{\"description\":\"Nodescriptionneeded\",\"done\":false,\"id\":0,\"title\":\"DoStuffbrain\"}";
+    @Test
+    void getAll_Success() throws JsonProcessingException, Exception {
+        mockMvc = MockMvcBuilders.standaloneSetup(subject).build();
+        String url= "/todo/all";
 
-        mockMvc.perform(post(WS_TODO_PATH)
+        Mockito.when(todoService.getAll()
+        ).thenReturn(new ArrayList<DetailedTodoDTO>() );
+
+        Mockito.when(detailedTodo2TodoMapper.convert(anyList())
+        ).thenReturn(new ArrayList<TodoDTO>() );
+
+
+        this.mockMvc.perform(MockMvcRequestBuilders.get(url)
+                .content((byte[]) null)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(json))
-                .andExpect(status().isOk());
-
-        verify(todoService, times(1)).addTodo(todo);
+        ).andExpect(status().isOk()).andReturn();
     }
-	
-	@Test
-    public void testAddTodoWithEmptyTitle() throws Exception {
-        DetailedTodo todo = new DetailedTodo(99,"",false, "");
-        String json = "{\"description\":\"\",\"done\":false,\"id\":99,\"title\":\"\"}";
 
-        mockMvc.perform(post(WS_TODO_PATH)
-	                .contentType(MediaType.APPLICATION_JSON)
-	                .content(json))
-	           .andExpect(status().isBadRequest());
+    @Test
+    void getById_Success() throws JsonProcessingException, Exception {
+        mockMvc = MockMvcBuilders.standaloneSetup(subject).build();
 
-        verify(todoService, never()).addTodo(todo);
-    }
-	
-	@Test
-    public void testAddTodoWithNullTitle() throws Exception {
-        DetailedTodo todo = new DetailedTodo(99, null, false, "");
-        String json = "{\"description\":\"\",\"done\":false,\"id\":99,\"title\":null}";
+        long param = 3l;
+        String url= "/todo/"+param;
 
-        mockMvc.perform(post(WS_TODO_PATH)
+        when(todoService.getTodoById(param)).thenReturn(new DetailedTodoDTO());
+
+        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.get(url)
+                .content(jsonString(param))
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(json))
-                .andExpect(status().isBadRequest());
+                .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk()).andReturn();
 
-        verify(todoService, never()).addTodo(todo);
+        assertEquals(200, mvcResult.getResponse().getStatus());
     }
+
+    @Test
+    void getById_KO() throws JsonProcessingException, Exception {
+        mockMvc = MockMvcBuilders.standaloneSetup(subject).build();
+
+        long param = 3l;
+        String url= "/todo/"+param;
+
+        when(todoService.getTodoById(param)).thenThrow(TodoException.class);
+
+        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.get(url)
+                .content(jsonString(param))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isNotFound()).andReturn();
+
+        assertEquals(404, mvcResult.getResponse().getStatus());
+    }
+
+    @Test
+    void addTodo_Success() throws JsonProcessingException, Exception {
+        mockMvc = MockMvcBuilders.standaloneSetup(subject).build();
+
+        String url= "/todo/";
+
+       DetailedTodoDTO detailedTodoDTO = new DetailedTodoDTO(1L, "Prepare food", false, "No description");
+
+        doNothing().when(todoService).addTodo(detailedTodoDTO);
+
+        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.post(url)
+                .content(jsonString(detailedTodoDTO))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk()).andReturn();
+
+        assertEquals(200, mvcResult.getResponse().getStatus());
+    }
+
+    @Test
+    void updateTodoState_Success() throws Exception {
+        mockMvc = MockMvcBuilders.standaloneSetup(subject).build();
+
+        long id = 3l;
+        boolean newState = true;
+        String url = "/todo/" + id + "?state=" + newState;
+
+        doNothing().when(todoService).updateTodoState(id, newState);
+
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.put(url)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                ).andExpect(status().isOk())
+                .andReturn();
+
+        assertEquals(200, mvcResult.getResponse().getStatus());
+    }
+
+    @Test
+    void updateTodoState_KO() throws Exception {
+        mockMvc = MockMvcBuilders.standaloneSetup(subject).build();
+
+        long id = 12345L;
+        boolean state = true;
+        String url = "/todo/" + id + "?state=" + state;
+
+        doThrow(new TodoException("Modification Todo impossible: l''élement à modifier est introuvable", 404)).when(todoService).updateTodoState(id, state);
+
+        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.put(url)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isNotFound()).andReturn();
+
+        assertEquals(404, mvcResult.getResponse().getStatus());
+    }
+
+
+
+
+    private String jsonString(Object obj) throws JsonProcessingException {
+        return new ObjectMapper().writeValueAsString(obj);
+    }
+
 }

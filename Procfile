@@ -1,0 +1,1 @@
+web: cd todo-java && java -jar target/todo-java-0.0.0.jar

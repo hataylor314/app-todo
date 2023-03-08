@@ -13,6 +13,7 @@
 
 	<properties>
 		<java.version>11</java.version>
+		<start-class>com.example.todo.TodoApplication</start-class>
 	</properties>
 	
 	<dependencyManagement>
@@ -72,24 +73,46 @@
     	  <scope>test</scope>
 		</dependency>
 	</dependencies>
-
+	
 	<build>
 		<plugins>
 			<plugin>
+			    <groupId>org.apache.maven.plugins</groupId>
+			    <artifactId>maven-jar-plugin</artifactId>
+			    <version>3.2.0</version>
+			    <configuration>
+			        <archive>
+			            <manifest>
+			                <addClasspath>true</addClasspath>
+			                <mainClass>com.example.todo.TodoApplication</mainClass>
+			            </manifest>
+			        </archive>
+			    </configuration>
+			</plugin>
+			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<version>2.5.3</version>
 				<configuration>
-					<excludes>
-						<exclude>
-							<groupId>org.projectlombok</groupId>
-							<artifactId>lombok</artifactId>
-						</exclude>
-					</excludes>
+					<mainClass>com.example.todo.TodoApplication</mainClass>
 				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+						<configuration>
+							<classifier>exec</classifier>
+							<attach>true</attach>
+							<excludeDevtools>true</excludeDevtools>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 			    <groupId>org.apache.maven.plugins</groupId>
 			    <artifactId>maven-compiler-plugin</artifactId>
+			    <version>3.8.1</version>
 			    <configuration>
 			        <source>1.8</source>
 			        <target>1.8</target>
